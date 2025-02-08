@@ -42,4 +42,8 @@ team_valine_00 = {
          }
     }
 }
-print(team_valine_00["team_members"]["Olorunfemi Popoola"])
+for member info in team_valine_00["team_members".items():
+    print(f"Name: {member}")
+    for key, value in info.items():
+        print(f"{key}: {value}")
+    print(".. * 50)
