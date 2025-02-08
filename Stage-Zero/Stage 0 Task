@@ -1,1 +1,45 @@
-
+team_valine_00 = {
+    "team_members": {
+          "Olorunfemi Popoola": {
+                "Slack username": "Femi",
+                "Email address": "phemmy.pops@gmail.com",
+                "Hobbies": "watching movies",
+                "Location": "Nigeria",
+                "Discipline": "Cell Biology and Genetics",
+                "Preferred programming language": "Python"
+          },
+          "Abodunrin Oluwafisayo Aminat": {
+                "Slack username": "Oluwafisayo",
+                "Email address": "oluwafisayoabodunrin@yahoo.com",
+                "Hobbies": "Reading, Baking, Research",
+                "Location": "Nigeria",
+                "Discipline": "Chemical Engineering",
+                "Preferred programming language": "Python"
+          },
+          "Yinka Adesina": {
+                "Slack username": "Yinka",
+                "Email address": "yinkadvm@outlook.com",
+                "Hobbies": "hiking",
+                "Location": "United Kingdom",
+                "Discipline": "Veterinary Medicine",
+                "Preferred programming language": "R"
+         },
+         "Feyisayo Lopez": {
+                "Slack username": "Feyisayo",
+                "Email address": "feyilopez1@gmail.com",
+                "Hobbies": "reading, crocheting",
+                "Location": "Nigeria",
+                "Discipline": "Physiology",
+                "Preferred programming language": "Python"
+         },
+         "Albert Amoah": {
+                "Slack username": "Albert",
+                "Email address": "albert.amoah750@gmail.com",
+                "Hobbies": "watching movies",
+                "Location": "Ghana",
+                "Discipline": "Health",
+                "Preferred programming language": "R"
+         }
+    }
+}
+print(team_valine_00["team_members"]["Olorunfemi Popoola"])
