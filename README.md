@@ -7,5 +7,5 @@ Thank you, HackBio!
 
 For the stage one task, we were given three different tasks
 Task one was to create a function that translates a DNA sequence to protein
-Task two was to create a function for calculating logistic population growth rate, which i was unable to complete
+Task two was to create a function for calculating logistic population growth rate
 Task three involved creating a function that calculates the Hamming distance between our slack and twitter usernames
