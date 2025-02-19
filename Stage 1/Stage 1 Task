@@ -5,6 +5,7 @@
 # mRNA codon table mapping codons to full amino acids
 # Note: AUG is the start codon and also codes for Methionine.
 # UAA, UAG, and UGA are stop codons
+
 codon_table = {
     "AUG": "Methionine",
     "AUA": "Isoleucine",
@@ -73,15 +74,18 @@ codon_table = {
 }
 
 dna_sequence = "CTCAAAAGTCTAGAGCCACCGTCCAGGGAGCAGGTAGCTGCTGGGCTCCGGGGACACTTTGCGTTCGGGCTGGGAGCGTGCTTTCCACGACGGTGACACGCTTCCCTGGATTGGGTAAGCTCCTGACTGAACTTGATGAGTCCTCTCTGAGTCACGGGCTCTCGGCTCCGTGTATTTTCAGCTCGGGAAAATCGCTGGGGCTGGGGGTGGGGCAGTGGGGACTTAGCGAGTTTGGGGGTGAGTGGGATGGAAGCTTGGCTAGAGGGATCATCATAGGAGTTGCATTGTTGGGAGACCTGGGTGTAGATGATGGGGATGTTAGGACCATCCGAACTCAAAGTTGAACGCCT"
+
 # step 1: transcription. this converts DNA to mRNA by replacing 'T' with 'U'.
 mrna_sequence = dna_sequence.replace("T", "U")
 print(f"mRNA Sequence: {mrna_sequence}")
+
 # step 2: to identify the reading frame, we look for the first occurrence of the start codon "AUG".
 start_index = mrna_sequence.find("AUG")
 if start_index == -1:
     print("No start codon (AUG) found in the mRNA sequence.")
     exit()  # this ends the program if no start codon is found and prints the error message above
 else:
+
 # step 3: translation. this convert mRNA to a protein sequence. translation starts at the start codon and stops at the first stop codon.
     protein = ""
     for i in range(start_index, len(mrna_sequence) - 2, 3):
@@ -99,10 +103,39 @@ else:
 print(f"Protein Sequence: {protein}")
 
 
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 #Task 2: Function for simulating logistic population growth curve
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-#i have been unable to figure out how to solve this task
+import math
+def population(x , k = 2, x_mid = 5):
+    solution = 1/(1 + math.exp(-k*(x-x_mid)))
+    return solution
+print(population(k = 2, x_mid = 5, x = 10))
+od_600 = []
+for i in range(0,24):
+    od_600.append(population(x = i, k = 0.5, x_mid = 10))
+print(od_600)
+
+
+#the function to generate 100 different growth curves.
+def generate_growth_curves(num_curves, time_points):
+    curves = {}
+    for i in range(num_curves):
+        curve = simulate_logistic_curve(time_points)
+        curves["Curve_" + str(i + 1)] = curve
+    return curves
+
+
+#the function to determine the time when the growth curve reaches 80% of the carrying capacity.
+def time_to_reach_80_percent(time_points, growth_curve, K=1):
+    threshold = 0.8 * K
+    for i in range(len(time_points)):
+        if growth_curve[i] >= threshold:
+            return time_points[i]
+    return None
+
+
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 #Task 3: Function for calculating the Hamming distance between Slack username and Twitter username
