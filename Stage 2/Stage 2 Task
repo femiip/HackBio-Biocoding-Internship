@@ -1,0 +1,172 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from scipy import stats
+from sklearn.preprocessing import LabelEncoder 
+
+# Q1 Define the data source URL
+data_source = "https://raw.githubusercontent.com/HackBio-Internship/public_datasets/main/R/nhanes.csv"
+
+# Load the dataset into a pandas DataFrame
+df = pd.read_csv(data_source, sep = ',')
+
+# Remove rows with missing values (NaN)
+df_filled = df.fillna(0)
+print(df_filled.head())
+
+# Q2. Create a figure with 2x2 subplots
+fig, axes = plt.subplots(2, 2, figsize=(15, 12))
+fig.suptitle('Distribution of Health Metrics in NHANES Dataset', fontsize=16, y=1.02)
+
+# Flatten the axes array to access individual subplots easily
+axes = axes.flatten()  # <-- Add this line
+
+# Create histograms with KDE
+
+# BMI Distribution
+sns.histplot(data=df, x='BMI', kde=True, ax=axes[0])  # <-- Now use axes[0]
+axes[0].set_title('BMI Distribution')
+axes[0].set_xlabel('BMI')
+axes[0].set_ylabel('Count')
+
+# Weight Distribution (kg)
+sns.histplot(data=df, x='Weight', kde=True, ax=axes[1]) # <-- Now use axes[1]
+axes[1].set_title('Weight Distribution (kg)')
+axes[1].set_xlabel('Weight (kg)')
+axes[1].set_ylabel('Count')
+
+# Weight Distribution (lbs)
+weight_lbs = df['Weight'] * 2.2
+sns.histplot(x=weight_lbs, kde=True, ax=axes[2]) # <-- Now use axes[2]
+axes[2].set_title('Weight Distribution (lbs)')
+axes[2].set_xlabel('Weight (lbs)')
+axes[2].set_ylabel('Count')
+
+# Age Distribution
+sns.histplot(data=df, x='Age', kde=True, ax=axes[3]) # <-- Now use axes[3]
+axes[3].set_title('Age Distribution')
+axes[3].set_xlabel('Age')
+axes[3].set_ylabel('Count')
+
+# Adjust layout to prevent overlap
+plt.tight_layout()
+
+# Show the plot
+plt.show()
+
+# Q3. Assuming the actual column name is "Pulse", adjust the code accordingly
+print(df["Pulse"].mean()) # Access using the actual column name
+
+# Q4. Replace 'dbp' with the actual column name for diastolic blood pressure ***
+# For example, if the column is named 'DiastolicBP', 
+min_dbp = df['BPDia'].min()
+max_dbp = df['BPDia'].max()
+# If the column name is "BPXDIAS" as it appears in the dataset columns, use that.
+
+print(f"Diastolic blood pressure range:")
+print(f"Minimum: {min_dbp}")
+print(f"Maximum: {max_dbp}")
+
+# Q5. Calculate variance and standard deviation for income
+income_variance = df['Income'].var()
+income_std = df['Income'].std()
+
+print(f"Income statistics:")
+print(f"Variance: {income_variance:.2f}")
+print(f"Standard Deviation: {income_std:.2f}")
+
+# Q6a. Create a combination plot using relplot 
+# Use 'hue' for one categorical variable, and 'style' or 'size' for others if needed
+g = sns.relplot(df, x="Weight", y="Height", hue="Gender")  
+
+# Add a title and adjust layout
+plt.suptitle("Height vs Weight by Gender")
+g.fig.tight_layout() # Use tight_layout() on the FacetGrid object
+plt.show()
+
+# Q6b. Create a combination plot using relplot 
+# Use 'hue' for one categorical variable, and 'style' or 'size' for others if needed
+g = sns.relplot(df, x="Weight", y="Height", hue="Diabetes")  
+
+# Add a title and adjust layout
+plt.suptitle("Height vs Weight by Diabetes")
+g.fig.tight_layout() # Use tight_layout() on the FacetGrid object
+plt.show()
+
+# Q6c. Create a combination plot using relplot 
+# Use 'hue' for one categorical variable, and 'style' or 'size' for others if needed
+g = sns.relplot(df, x="Weight", y="Height", hue="SmokingStatus")  
+
+# Add a title and adjust layout
+plt.suptitle("Height vs Weight by Smoking Status")
+g.fig.tight_layout() # Use tight_layout() on the FacetGrid object
+plt.show()
+
+
+
+# Q7a. Convert 'Gender' column to numerical representation (e.g., 0 for 'female', 1 for 'male')
+df['Gender_Numeric'] = df['Gender'].map({'female': 0, 'male': 1}) # Create a new column for numerical Gender
+
+# Assign the numerical 'Gender' column and 'Age' column to variables
+Gender_Numeric = df['Gender_Numeric'] 
+Age = df['Age'] 
+
+# Perform an independent t-test using the numerical Gender representation
+t_stat, p_value = stats.ttest_ind(Gender_Numeric, Age)
+
+print(f"T-statistic: {t_stat}")
+print(f"P-value: {p_value}")
+
+# Interpretation
+if p_value < 0.05:
+    print("The difference between Age and Gender is statistically significant.")
+else:
+    print("The difference between age and gender is not statistically significant.")
+
+# Q7b. Drop all NAS
+df =df.dropna()
+# Convert 'Diabetes' to numerical representation if it's categorical
+# For example, if it has values like 'Yes', 'No', etc., you can use label encoding:
+encoder = LabelEncoder()
+df['Diabetes_Numerical'] = encoder.fit_transform(df['Diabetes'])  
+
+BMI = (df['BMI'])
+#print(BMI)
+
+Diabetes = (df['Diabetes'])
+#print('Diabetes')
+# Perform an independent t-test 
+t_stat, p_value = stats.ttest_ind(BMI,df['Diabetes_Numerical']) # Use the numerical column
+ 
+print(f"T-statistic: {t_stat}")
+print(f"P-value: {p_value}")
+
+# Interpretation
+if p_value < 0.05:
+    print("The difference between BMI and Diabetes is statistically significant.")
+else:
+    print("The difference between BMI and Diabetes is not statistically significant.")
+
+# Q7c. Drop all NAS
+df =df.dropna()
+AlcoholYear = (df['AlcoholYear'])
+#print(AlcoholYear)
+RelationshipStatus = (df['RelationshipStatus'])
+#print('RelationshipStatus')
+
+# Convert 'RelationshipStatus' to numerical representation if it's categorical
+# For example, if it has values like 'Single', 'Married', etc., you can use label encoding:
+encoder = LabelEncoder()
+df['RelationshipStatus_Numerical'] = encoder.fit_transform(df['RelationshipStatus'])  
+
+# Now use the numerical representation for the t-test
+t_stat, p_value = stats.ttest_ind(AlcoholYear, df['RelationshipStatus_Numerical']) # Use the numerical column
+
+print(f"T-statistic: {t_stat}")
+print(f"P-value: {p_value}")
+
+# Interpretation
+if p_value < 0.05:
+    print("The difference between AlcoholYear and RelationshipStatus is statistically significant.")
+else:
+    print("The difference between AlcoholYear and RelationshipStatus is not statistically significant.")
