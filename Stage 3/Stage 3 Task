@@ -1,1 +1,85 @@
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+from sklearn.cluster import KMeans
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.metrics import silhouette_score
+df_link = 'https://raw.githubusercontent.com/PacktPublishing/Machine-Learning-in-Biotechnology-and-Life-Sciences/refs/heads/main/datasets/dataset_wisc_sd.csv'
+df = pd.read_csv(df_link)
+
+features = df
+print(df.head())
+  
+         id diagnosis  ...  symmetry_worst  fractal_dimension_worst
+0    842302         M  ...          0.4601                  0.11890
+1    842517         M  ...          0.2750                  0.08902
+2  84300903         M  ...          0.3613                  0.08758
+3  84348301         M  ...          0.6638                  0.17300
+4  84358402         M  ...          0.2364                  0.07678
+
+[5 rows x 32 columns]
+numeric_cols = features.select_dtypes(include=np.number).columns
+features = features[numeric_cols]
+# Handle missing values
+features = features.fillna(features.mean())
+# Scale the features
+scaler = StandardScaler()
+scaled_features = scaler.fit_transform(features)
+# PCA
+pca = PCA(n_components=0.95)
+pca_features = pca.fit_transform(scaled_features)
+print(pca_features)
+[[ 8.88653813e+00  1.95357967e+00 -1.31709364e+00 ... -2.08762834e-01
+  -1.25870819e-01 -8.30298553e-01]
+ [ 2.16885372e+00 -3.75122052e+00 -5.24054104e-01 ...  3.80858372e-01
+  -7.02849727e-01  1.13572775e+00]
+ [ 5.41810417e+00 -1.08441519e+00 -5.03789077e-01 ...  2.59524971e-03
+  -9.42769911e-02  4.79766885e-01]
+ ...
+ [ 1.18645948e+00 -1.89405725e+00  5.64011739e-01 ...  2.95065008e-01
+   4.65124767e-01  5.99183612e-01]
+ [ 1.00967499e+01  1.68132110e+00 -2.11636986e+00 ... -1.51281210e-01
+  -4.42053090e-01 -1.84759902e-01]
+ [-5.18795599e+00 -6.71237312e-01  1.45084120e+00 ...  1.04557769e+00
+   5.82217504e-01  9.53933581e-02]]
+# K-Means Clustering
+
+silhouette_scores = []
+for k in range(2, 11):
+    kmeans = KMeans(n_clusters=k, random_state=42, n_init="auto")
+    labels = kmeans.fit_predict(pca_features)
+    silhouette_scores.append(silhouette_score(pca_features, labels))
+
+        
+plt.plot(range(2, 11), silhouette_scores)
+plt.xlabel('Number of Clusters (K)')
+Text(0.5, 0, 'Number of Clusters (K)')
+plt.ylabel('Silhouette Score')
+Text(0, 0.5, 'Silhouette Score')
+plt.title('Silhouette Score for Optimal K')
+Text(0.5, 1.0, 'Silhouette Score for Optimal K')
+plt.show()
+#Choose the K value based on the highest silhouette score
+optimal_k = np.argmax(silhouette_scores) + 2
+print(f"Optimal number of clusters (K): {optimal_k}")
+Optimal number of clusters (K): 2
+kmeans = KMeans(n_clusters=optimal_k, random_state=42, n_init="auto")
+clusters = kmeans.fit_predict(pca_features)
+# Visualize clusters (using first 2 principal components)
+plt.figure(figsize=(8, 6))
+plt.scatter(pca_features[:, 0], pca_features[:, 1], c=clusters, cmap='viridis')
+plt.xlabel('Principal Component 1')
+plt.ylabel('Principal Component 2')
+plt.title('K-Means Clustering (PCA)')
+plt.colorbar(label='Cluster')
+plt.show()
+#Visualize the clusters with boxplots.
+for column in numeric_cols:
+   plt.figure(figsize=(10,6))
+   sns.boxplot(x='cluster', y=column, data=df)
+   plt.title(f'Boxplot of {column} by Cluster')
+   plt.show()
 
